@@ -1,4 +1,4 @@
-# DB Helper Classes PHP (Vanilla)
+# DB Helper Classes - PHP (Vanilla)
 
 **Zweck**: Eigenständige, wiederverwendbare Hilfsklassen für Datenbankoperationen in PHP-Projekten. Framework-unabhängig und optimiert für häufige Aufgaben.
 
