@@ -1,4 +1,4 @@
-# ARRAY Helper – Classes PHP (Vanilla)
+# ARRAY Helper - Classes PHP (Vanilla)
 
 **Zweck**: Universell einsetzbare Funktionen zur Array-Prüfung **ohne aufdringliche Fehlerbehandlung** – der Nutzer entscheidet selbst, wie mit ungültigen Daten umgegangen wird.
 
@@ -42,4 +42,4 @@ $exists = MY_ARRAY::in_array_STRG("apple", "apple,banana,orange"); // true
 ---
 
 **Autor**: Dave Taylor
-**eMail**: dt-script@descriptsign.de
+[dt-script@descriptsign.de](mailto:dt-script@descriptsign.de)
