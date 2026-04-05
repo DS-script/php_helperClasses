@@ -81,4 +81,4 @@ $uniqueKeys = $db->transform_arParam_keyIterator($params);
 ---
 
 **Autor**: Dave Taylor
-**eMail**: dt-script@descriptsign.de
+[dt-script@descriptsign.de](mailto:dt-script@descriptsign.de)
