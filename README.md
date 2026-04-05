@@ -1,84 +1,47 @@
-# DB Helper Classes - PHP (Vanilla)
+# Helper Classes - PHP (Vanilla)
 
-**Zweck**: Eigenständige, wiederverwendbare Hilfsklassen für Datenbankoperationen in PHP-Projekten. Framework-unabhängig und optimiert für häufige Aufgaben.
+## Zweck
 
----
+Modulare Helper-Klassen und Traits für wiederkehrende Aufgaben in PHP-Projekten. Framework-unabhängig, für Szenarien, in denen Standardfunktionen unzureichend oder umständlich sind.
 
-## **Installation**
+## Einsatzbereiche
 
-1. **Dateien einbinden**:
-  ```php
-   require_once 'path/to/DB.php';
-   require_once 'path/to/class.trait.array.php'; // Für Array-Hilfsfunktionen
-  ```
-2. **Datenbankkonfiguration** (z. B. in `config.php`):
-  ```php
-   define('DB_HOST', 'localhost');
-   define('DB_NAME', 'deine_datenbank');
-   define('DB_USER', 'benutzer');
-   define('DB_PASS', 'passwort');
-   define('DB_PORT', '3306');
-  ```
+- Datenbankoperationen (Prepared Statements, Transaktionslogik)
+- Array-Verarbeitung (Validierung, Transformation)
+- Utility-Funktionen (String-Array-Konvertierung, kontrollierte Validierung)
 
 ---
 
-## **Schnellstart**
+## Design-Prinzipien
 
-### **1. Verbindung herstellen**
+### 1. Modularität
 
-```php
-$db = new DB(); // Nutzt Konstanten aus config.php
-// Oder mit Parametern:
-$db = new DB('localhost', 'db_name', 'user', 'pass', '3306');
-```
+Jede Klasse/Trait ist **selbstständig nutzbar** und löst ein klar definiertes Problem.
 
-### **2. Häufige Abfragen**
+### 2. Minimalismus
 
-#### **SELECT (mehrere Ergebnisse)**
+- **Keine externen Abhängigkeiten** (reines Vanilla-PHP)
+- **Keine erzwungene Fehlerbehandlung** – Rückgabewerte ermöglichen individuelles Handling
 
-```php
-$query = "SELECT * FROM users WHERE id = :id";
-$params = [ [":id", 1, "int"] ]; // [Parameter, Wert, Typ]
-$results = $db->query_prepare_fetchAll($query, $params);
-```
+### 3. Dokumentation
 
-#### **INSERT (mehrere Datensätze)**
-
-```php
-$query = "INSERT INTO users (name) VALUES (:name)";
-$users = [
-    [":name", "Alice", "strg"],
-    [":name", "Bob", "strg"]
-];
-$affectedRows = $db->query_prepare_multiWrite($query, $users);
-```
-
-#### **Letzte Insert-ID**
-
-```php
-$db->query_prepare("INSERT INTO users (name) VALUES ('Test')", null);
-$lastId = $db->get_lastID();
-```
-
-#### **Array-Transformation (für dynamische Keys)**
-
-```php
-$params = [
-    ["name", "Alice", "strg"],
-    ["name", "Bob", "strg"] // → Wird zu "name_0", "name_1"
-];
-$uniqueKeys = $db->transform_arParam_keyIterator($params);
-```
+- **PHPDoc-Standard** für alle Methoden
+- **Praktische Beispiele** in den Klassendokumentationen:
+  - `class.trait.array_readme.md` >> `class.trait.array.php`
+  - `class.db_readme.md` >> `class.db.php`
 
 ---
 
-## **Architektur**
+## Zielgruppe
 
-- **Vanilla-PHP**: Keine Abhängigkeiten.
-- **Fehlerbehandlung**: PDO-Exceptions werden direkt geworfen (Nutzer entscheidet über Handling).
-- **Modular**: Trait `DB_PREPARES` kann in andere Klassen eingebunden werden.
+Für Entwickler, die **praktische, wiederverwendbare Lösungen** für Standardaufgaben benötigen – ohne Framework-Ballast.
 
 ---
 
-**Autor**: Dave Taylor
-**eMail**: dt-script@descriptsign.de
+**Kontakt**  
+Dave Taylor  
+[dt-script@descriptsign.de](mailto:dt-script@descriptsign.de)
+
+---
+
+> *Kein Framework, sondern eine **Sammlung spezialisierter Utilities** – wie ein Werkzeugkasten für gezielten Einsatz.*
