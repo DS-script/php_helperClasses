@@ -259,9 +259,10 @@ class DT_SETs{
             }
 
             $arFiles = glob($dir . "*." . $value);
-            $out = $value === "css" ?   $this->createLink_css($arFiles, $tab, $ar) 
-                                    :   $this->createLink_js($arFiles, $tab, $ar);
-            
+            if ($this->is_array_valide($arFiles)) {
+                $out = $value === "css" ?   $this->createLink_css($arFiles, $tab, $ar) 
+                                        :   $this->createLink_js($arFiles, $tab, $ar);
+            }            
         }
         return $out;
     } //END :createLink
