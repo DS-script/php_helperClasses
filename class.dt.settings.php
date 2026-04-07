@@ -241,29 +241,31 @@ class DT_SETs{
      * ----------------------------------------------------------------------
      * Erstellt Links für CSS- oder JS-Dateien eines Verzeichnisses.
      *
-     * @param   string  $value  "css" oder "js"
+     * @param   string  $type   "css" oder "js"
      * @param   int     $tab    Anzahl der Tabs für Einrückung
      * @param   array   $ar     Prioritäten-Array
      *
      * @return  string  HTML-Links für die Dateien
      * ----------------------------------------------------------------------
      */
-    public function createLink(string $value, int $tab=0, array &$ar=[]){
+    public function createLink(string $type, int $tab=0, array $ar=[]){
+        ### AR_IGNOR noch einbauen files die nicht gelesen werden sollen
         $dir = "";
         $out = "";
-        if (in_array($value, ["js","css"])) {
-            if ($value === "js") {
+        if (in_array($type, ["js","css"])) {
+            if ($type === "js") {
                 $dir = $this->get_DIR_JS();
             }else{
                 $dir = $this->get_DIR_CSS();
             }
 
-            $arFiles = glob($dir . "*." . $value);
+            $arFiles = glob($dir . "*." . $type);
             if ($this->is_array_valide($arFiles)) {
-                $out = $value === "css" ?   $this->createLink_css($arFiles, $tab, $ar) 
+                $out = $type === "css"  ?   $this->createLink_css($arFiles, $tab, $ar) 
                                         :   $this->createLink_js($arFiles, $tab, $ar);
             }            
         }
+
         return $out;
     } //END :createLink
 
