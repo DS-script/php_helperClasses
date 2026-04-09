@@ -3,6 +3,13 @@
 --- Comment -----------------------------------------------------
     CLASS - DB              Verbindung zur DB
     CLASS - PREPARES        Prepare-Methoden
+
+    Beispiel :
+                            const DB_HOST   = "SERVER";
+                            const DB_NAME   = "DATABASE";
+                            const DB_USER   = "NAME";
+                            const DB_PASS   = "PASS";
+                            const DB_PORT   = "3006";
 ----------------------------------------------------------------
 */
 require_once(__DIR__ . '/class.trait.array.php');
@@ -138,6 +145,7 @@ trait DB_PREPARES {
      * ----------------------------------------------------------------------
      * Iteriert über ein Array und modifiziert den ersten Wert jedes Elements,
      * indem ein fortlaufender Index pro Schlüssel angehängt wird.
+     * Zusätzlich wird ein formatierter String für SQL-IN-Klauseln generiert.
      *
      * @param   array   &$ar    Referenz auf das zu verarbeitende Array.
      *                          Erwartete Struktur:
@@ -146,21 +154,49 @@ trait DB_PREPARES {
      * @param   string  $strg   Trennzeichen zwischen Schlüssel und Index
      *                          (Standard: "_")
      *
-     * @return  array           Liste der eindeutig vorkommenden Basis-Schlüssel
-     *                          (ohne angehängten Index)
+     * @return  array           Assoziatives Array mit:
+     *                          - "arStrg":   Array der modifizierten Schlüssel (z. B. ["user_0", "user_1"])
+     *                          - "arKeys":   Array der Zähler pro Schlüssel (z. B. ["user" => 2])
+     *                          - "strgValue": Formatierter String für SQL-IN-Klauseln
+     *                                    (z. B. "(user_0, user_1), (role_0)")
+     * 
+     * // Beispiel:
+     *              $arParam = [["user", "Alice"], ["user", "Bob"], ["role", "admin"]];
+     *              $result["strgValue"] => "(user_0, user_1), (role_0)"
      * ----------------------------------------------------------------------
      */
     public function transform_arParam_keyIterator(array &$ar, string $strg="_"){
         $arKeys_iter = []; // iterator CHK bs: [a] = n++ start bei 0 - n
+        $arOut["arStrg"] = [];
+        $arOut["arKeys"] = [];
+        $arOut["strgValue"] = "";
+
+        $arFirstKey = array_key_first($ar);
+        $arFirstSubKey = array_key_first($ar[$arFirstKey]);
+        $key_control = $ar[$arFirstKey][$arFirstSubKey];
+
         if (self::is_array_2D($ar, true)) {
             foreach ($ar as $key => &$value) {
                 $key_first = array_key_first($value);
-                $key = $value[$key_first];
-                $arKeys_iter[$key] = ($arKeys_iter[$key] ?? -1) + 1;
-                $value[$key_first] = $key . $strg . $arKeys_iter[$key];
+                $key_set = $value[$key_first];
+                $arKeys_iter[$key_set] = ($arKeys_iter[$key_set] ?? -1) + 1;
+                $new_value = $key_set . $strg . $arKeys_iter[$key_set];
+                // Baue einen formatierten String für SQL-IN-Klauseln (z. B. "(user_0, user_1, user_2)")
+                if ($key_set === $key_control && $arKeys_iter[$key_control] === 0) {
+                    $arOut["strgValue"] .= "(" . $new_value;
+                } elseif ($key_set === $key_control && $arKeys_iter[$key_control] > 0) {
+                    $arOut["strgValue"] .= "), (" . $new_value;
+                } else {
+                    $arOut["strgValue"] .= ", " . $new_value;
+                }
+
+                $value[$key_first] = $new_value;
+                $arOut["arStrg"][] = $new_value;
             }
-        }       
-        return array_keys($arKeys_iter);
+            $arOut["arKeys"] = $arKeys_iter;
+            $arOut["strgValue"] .= ")";
+        }
+        return $arOut;
     } // END : transform_arParam_keyIterator
 }
 ?>
@@ -229,3 +265,64 @@ class DB {
         return $out;
     } // END : get_lastID
 } # END : DB
+
+class DB_arPARAM{
+    private $param = [];
+    private $param_key;   
+    private $param_value;   
+    private $param_type;
+    /* 
+    #########################################################
+    GETTERs & SETTERs                
+    #########################################################
+    */
+    // ATTRIBUT : param
+    public function get_param(): array
+    {
+        return $this->param;
+    } // END : get_param
+
+    public function set_param(array $param): void
+    {
+        $this->param = $param;
+    } // END : set_param
+    //.......................................................
+
+    // ATTRIBUT : param_key
+    public function get_param_key(): string
+    {
+        return $this->param_key;
+    } // END : get_param_key
+
+    public function set_param_key(string $key): void
+    {
+        $this->param_key = $key;
+    } // END : set_param_key
+    //.......................................................
+
+
+    // ATTRIBUT : param_value
+    public function get_param_value(): mixed
+    {
+        return $this->param_value;
+    } // END : get_param_value
+
+    public function set_param_value(mixed $value): void
+    {
+        $this->param_value = $value;
+    } // END : set_param_value
+    //.......................................................
+
+
+    // ATTRIBUT : param_type
+    public function get_param_type(): int
+    {
+        return $this->param_type;
+    } // END : get_param_type
+
+    public function set_param_type(int $type): void
+    {
+        $this->param_type = $type;
+    } // END : set_param_type
+    //.......................................................  
+}
